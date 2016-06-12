@@ -4,7 +4,7 @@ USING: accessors arrays assocs byte-arrays calendar combinators
   io.encodings.binary io.files io.pathnames kernel locals make
   math math.parser multiline namespaces peg.javascript
   peg.javascript.ast regexp sequences splitting strings summary
-  threads ;
+  system threads ;
 IN: monstercat
 
 UNION: urldata
@@ -80,14 +80,24 @@ skipped-folder? f set
   if
   [ "title" ,, "artist" ,, ] 2curry H{ } make ;
 
-: title>filename ( string -- string' )
-  " " "_"  replace
+: sanitize-filename ( string -- string' )
   "/" "+"  replace
-  "\\" "+" replace
-  ";" ""   replace
-  ":" ""   replace
+  os windows = [
+    "\\" "+" replace
+    ":" ""   replace
+    "?" ""   replace
+    "<" ""   replace
+    ">"  ""  replace
+    ":"  ""  replace
+    "\"" ""  replace
+    "|"  ""  replace
+    "?"  ""  replace
+    "*"  ""  replace
+  ] when
+  R/ _{2,}/ "_" re-replace ;
 
-  R/ _{2,}/ "_" re-replace ".mp3" append ;
+: title>filename ( string -- string' )
+  sanitize-filename ".mp3" append ;
 
 : json>track ( json-info -- track )
   bindings>>
@@ -189,8 +199,7 @@ skipped-folder? f set
   [ skip-folder ]
   [
     [
-      "/" "&"  replace
-      "\\" "&" replace
+      sanitize-filename
       make-directories
     ]
     [
