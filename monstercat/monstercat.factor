@@ -84,9 +84,9 @@ skipped-folder? f set
   "/" "+"  replace
   os windows = [
     "\\" "+" replace
-    ":" ""   replace
-    "?" ""   replace
-    "<" ""   replace
+    ":"  ""   replace
+    "?"  ""   replace
+    "<"  ""   replace
     ">"  ""  replace
     ":"  ""  replace
     "\"" ""  replace
@@ -198,8 +198,8 @@ skipped-folder? f set
   name dup exists?
   [ skip-folder ]
   [
+    sanitize-filename
     [
-      sanitize-filename
       make-directories
     ]
     [
