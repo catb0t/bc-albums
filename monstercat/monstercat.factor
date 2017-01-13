@@ -81,12 +81,12 @@ skipped-folder? f set
   [ "title" ,, "artist" ,, ] 2curry H{ } make ;
 
 : sanitize-filename ( string -- string' )
-  "/" "+"  replace
+  "/" "+" replace
   os windows = [
     "\\" "+" replace
-    ":"  ""   replace
-    "?"  ""   replace
-    "<"  ""   replace
+    ":"  ""  replace
+    "?"  ""  replace
+    "<"  ""  replace
     ">"  ""  replace
     ":"  ""  replace
     "\"" ""  replace
@@ -118,7 +118,7 @@ skipped-folder? f set
   "http:" prepend my-http-get
 
   [
-    4dup [ drop ] 2dip [ swap ] dip "%s %s - %s\n\n" printf flush
+    3dup swap "%s %s - %s\n\n" printf flush
   ] dip
   [ [ swap ] dip ] 2dip
   [ [ "artist" ,, "title" ,, "num" ,, ] H{ } make ] dip
@@ -173,30 +173,22 @@ skipped-folder? f set
     if ;
 
 
-:: write-track ( track -- )
-  track
-  [ filename>> ]
+: write-track ( track -- )
+  [ metadata>> ]
   [ filedata>> ]
-  [ metadata>> ] tri
-    :> meta
-    :> data
-    :> name
+  [ filename>> ] tri
 
-  data name
   [ binary set-file-contents ]
   [ current-directory get swap "wrote %s/%s\n\n" printf flush ]
-  bi ;
+  bi drop ;
 
-:: write-album ( album-data -- )
-  album-data
-  [ art>> ]
-  [ name>> ]
-  [ tracks>> ] tri
-    :> tracks
-    :> name
-    :> art
-  name dup exists?
-  [ skip-folder ]
+: write-album ( album-data -- )
+  [ tracks>> ]
+  [ art>>    ]
+  [ name>>   ] tri
+
+  dup exists?
+  [ skip-folder 2drop ]
   [
     sanitize-filename
     [
@@ -204,8 +196,8 @@ skipped-folder? f set
     ]
     [
       [
-        art "AlbumArt.jpg" binary set-file-contents
-        tracks [ write-track ] each
+        "AlbumArt.jpg" binary set-file-contents
+        [ write-track ] each
       ] with-directory
     ]
     bi
