@@ -11,6 +11,6 @@ H{
     { deploy-word-props? f }
     { deploy-c-types? f }
     { deploy-help? f }
-    { deploy-name "monstercat" }
+    { deploy-name "bc-albums" }
     { deploy-unicode? f }
 }

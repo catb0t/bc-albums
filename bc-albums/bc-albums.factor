@@ -138,8 +138,8 @@ skipped-folder? f set
 
 :: page>tracks ( html -- album-data )
   html
-  dup "var TralbumData" swap start tail
-  dup "</script>" swap start head
+  dup "var TralbumData" swap subseq-start tail
+  dup "</script>" swap subseq-start head
   parse-javascript statements>>
 
   [ dup ast-begin?
@@ -212,7 +212,7 @@ skipped-folder? f set
     bi
     skipped-folder? get [
       "Sleeping for 10 seconds" print
-      10 iota [ 1 + number>string "%s " printf flush 1 seconds sleep ] each
+      10 <iota> [ 1 + number>string "%s " printf flush 1 seconds sleep ] each
       "" print
       skipped-folder? f set
     ] when
